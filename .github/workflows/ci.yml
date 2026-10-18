@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, "feat/**", "fix/**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build and Test Rust Crate
+        run: |
+          cargo test
+          cargo build --release
+
+      - name: Install Python Dependencies & Lint
+        run: |
+          uv sync --all-extras --dev
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Run Python Test Suite
+        run: uv run pytest
