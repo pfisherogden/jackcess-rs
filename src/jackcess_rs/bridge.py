@@ -166,9 +166,16 @@ def get_rust_lib() -> ctypes.PyDLL | None:
 
 def rust_jackcess_exec(req: dict[str, Any]) -> dict[str, Any] | None:
     """Execute a Jackcess database read/write operation natively in Rust."""
-    lib = get_rust_lib()
-    if lib is None or not isinstance(req, dict):
+    if not isinstance(req, dict):
         return None
+    lib = get_rust_lib()
+    if lib is None:
+        try:
+            from mm_to_json.rust_bridge import rust_jackcess_exec as mm_exec
+
+            return mm_exec(req)
+        except Exception:
+            return None
 
     try:
         res: Any = lib.jackcess_py_exec(req)
