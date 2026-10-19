@@ -56,14 +56,18 @@ impl JetVersion {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ColumnDef {
     pub name: String,
-    #[serde(rename = "type")]
+    #[serde(rename = "type", default)]
     pub col_type_name: String,
+    #[serde(default)]
     pub length: u16,
+    #[serde(default)]
     pub precision: u8,
+    #[serde(default)]
     pub scale: u8,
+    #[serde(default)]
     pub auto_number: bool,
     #[serde(skip)]
     pub col_type: u8,
@@ -96,7 +100,9 @@ pub struct RealIndexDef {
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct IndexDef {
     pub name: String,
+    #[serde(default)]
     pub unique: bool,
+    #[serde(default)]
     pub columns: Vec<String>,
     #[serde(default)]
     pub column_orders: Vec<bool>,
